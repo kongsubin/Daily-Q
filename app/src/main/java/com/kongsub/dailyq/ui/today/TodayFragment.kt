@@ -19,6 +19,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -47,12 +49,9 @@ class TodayFragment : BaseFragment() {
 
         // 코루틴 스코프
         viewLifecycleOwner.lifecycleScope.launch {
-            val qidDateFormat = SimpleDateFormat("yyyy-MM-dd")
-            val qid = qidDateFormat.format(Date())
-            val question = api.getQuestion(qid)
-
-            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.KOREA)
-            binding.date.text = dateFormat.format(qidDateFormat.parse(question.id))
+            val question = api.getQuestion(LocalDate.now())
+            val dateFormatter = DateTimeFormatter.ofPattern("yyyy. M. d.")
+            binding.question.text = dateFormatter.format(question.id)
             binding.question.text = question.text
         }
     }
