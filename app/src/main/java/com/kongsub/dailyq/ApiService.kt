@@ -11,6 +11,8 @@ import retrofit2.http.Path
 import java.time.LocalDate
 import com.kongsub.dailyq.api.adapter.LocalDateAdapter
 import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 /* Retrofit 생성시, OkHttpClient, Gson, Converters 등 여러 객체를 생성하므로
    싱글톤 패턴으로 만들어 앱 전체에서 하나의 인스턴스를 공유하게 만듦 */
@@ -20,6 +22,21 @@ interface ApiService {
 
         private var INSTANCE: ApiService? = null
 
+        private fun okHttpClient(): OkHttpClient {
+            val builder = OkHttpClient.Builder()
+            val logging = HttpLoggingInterceptor()
+            logging.level = HttpLoggingInterceptor.Level.BODY
+            /*
+            NONE : 로그 출력 x
+            BASIC : 요청라인과 응답 라인만 출력
+            HEADERS : 요청라인과 요청헤더 응답라인과 응답 헤더 출력
+            BODY : 요청라인, 헤더, 본문, 응답 라인, 헤더, 본문을 출력
+             */
+
+            return builder
+                .addInterceptor(logging)
+                .build()
+        }
         private fun create(context: Context) : ApiService {
             val gson = GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -35,6 +52,7 @@ interface ApiService {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(LocalDateConverterFactory())
                 .baseUrl("http://10.0.2.2:5000")
+                .client(okHttpClient())
                 .build()
                 .create(ApiService::class.java)
         }
