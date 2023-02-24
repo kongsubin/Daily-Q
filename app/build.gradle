@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // retrofit - json <-> 객체 변환 컨버터
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     // 코루틴 스코프 정의
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'

@@ -45,10 +45,8 @@ class TodayFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 코루틴 스코프 
+        // 코루틴 스코프
         viewLifecycleOwner.lifecycleScope.launch {
-            val api = ApiService.create(requireContext())
-
             val qidDateFormat = SimpleDateFormat("yyyy-MM-dd")
             val qid = qidDateFormat.format(Date())
             val question = api.getQuestion(qid)
