@@ -51,7 +51,7 @@ class TodayFragment : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val question = api.getQuestion(LocalDate.now())
             val dateFormatter = DateTimeFormatter.ofPattern("yyyy. M. d.")
-            binding.question.text = dateFormatter.format(question.id)
+            binding.date.text = dateFormatter.format(question.id)
             binding.question.text = question.text
         }
     }
