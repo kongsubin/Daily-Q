@@ -6,13 +6,14 @@ import com.google.gson.GsonBuilder
 import com.kongsub.dailyq.api.response.Question
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
 import java.time.LocalDate
 import com.kongsub.dailyq.api.adapter.LocalDateAdapter
 import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
+import com.kongsub.dailyq.api.response.Answer
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
+import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 
 /* Retrofit 생성시, OkHttpClient, Gson, Converters 등 여러 객체를 생성하므로
@@ -76,5 +77,40 @@ interface ApiService {
     // @Path : 매개변수가 경로에서 사용됨
     // Question : 응답 구조
     @GET("v1/questions/{pid}")
-    suspend fun getQuestion(@Path("pid") pid: LocalDate): Question
+    suspend fun getQuestion(
+        @Path("pid") pid: LocalDate
+    ): Response<Question> // Response - HTTP 응답 코드 및 헤더와 같은 정보를 가져올 수 잇음.
+
+    @GET("/v1/questions/{qid}/answers/{uid}")
+    suspend fun getAnswer(
+        @Path("qid") qid: LocalDate,
+        @Path("uid") uid: String? = "anonymous"
+    ): Response<Answer>
+
+    @FormUrlEncoded // 요청의 Content-Type 을 "application/x-www-form-urlencoded"로 만든다.
+    @POST("/v1/questions/{qid}/answers")
+    suspend fun writeAnswer(
+        @Path("qid") qid: LocalDate,
+        @Field("text") text: String? = null,
+        @Field("photo") photo: String? = null
+    /*
+    @Path("qid") qid: String,
+    @Body params: WirteParmas // 객체를 JSON으로 직렬화하여 요청의 본문으로 사용됨.
+     */
+    ): Response<Answer>
+
+    @FormUrlEncoded
+    @PUT("/v1/questions/{qid}/answers/{uid}")
+    suspend fun editAnswer(
+        @Path("qid") qid: LocalDate,
+        @Field("text") text: String? = null,
+        @Field("photo") photo: String? = null,
+        @Path("uid") uid: String? = "anonymous"
+    ): Response<Answer>
+
+    @DELETE("/v1/questions/{qid}/answers/{uid}")
+    suspend fun deleteAnswer(
+        @Path("qid") qid: LocalDate,
+        @Path("uid") uid: String? = "anonymous"
+    ): Response<Unit>
 }
