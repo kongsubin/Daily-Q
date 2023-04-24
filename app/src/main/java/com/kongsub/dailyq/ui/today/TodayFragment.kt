@@ -10,27 +10,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.gson.*
-import com.kongsub.dailyq.ApiService
 import com.kongsub.dailyq.R
-import com.kongsub.dailyq.api.response.HelloWorld
 import com.kongsub.dailyq.api.response.Question
 import com.kongsub.dailyq.databinding.FragmentTodayBinding
 import com.kongsub.dailyq.ui.base.BaseFragment
 import com.kongsub.dailyq.ui.write.WriteActivity
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.lang.reflect.Type
-import java.net.HttpURLConnection
-import java.net.URL
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
-
 
 
 class TodayFragment : BaseFragment() {

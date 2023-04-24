@@ -1,8 +1,9 @@
-package com.kongsub.dailyq
+package com.kongsub.dailyq.api
 
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
+import com.kongsub.dailyq.AuthManager
 import com.kongsub.dailyq.api.response.Question
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -43,6 +44,7 @@ interface ApiService {
                 // 서버와 연결 후 데이터 수신시 정해진 시간 초과할때 발생,
                 // 10초안에 데이터를 받아와야한다는 뜻이 아닌, 데이터를 읽어오는 각 작동의 간격이 10초를 초과하면 안됨.
                 .readTimeout(10, TimeUnit.SECONDS)  // 서버로 데이터를 보낼 때 발생
+                .addInterceptor(AuthInterceptor()) // OkHttp - Application 간의 Interceptors
                 .addInterceptor(logging)
                 .build()
         }

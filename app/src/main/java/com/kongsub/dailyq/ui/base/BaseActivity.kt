@@ -2,7 +2,7 @@ package com.kongsub.dailyq.ui.base
 
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.kongsub.dailyq.ApiService
+import com.kongsub.dailyq.api.ApiService
 
 abstract class BaseActivity : AppCompatActivity() {
     val api: ApiService by lazy { ApiService.getInstance() }

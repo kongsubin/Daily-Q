@@ -1,6 +1,7 @@
 package com.kongsub.dailyq
 
 import android.app.Application
+import com.kongsub.dailyq.api.ApiService
 
 class App : Application() {
 
