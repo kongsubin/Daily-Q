@@ -10,8 +10,10 @@ import java.time.LocalDate
 import com.kongsub.dailyq.api.adapter.LocalDateAdapter
 import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
 import com.kongsub.dailyq.api.response.Answer
+import com.kongsub.dailyq.api.response.AuthToken
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 import java.util.concurrent.TimeUnit
@@ -73,22 +75,36 @@ interface ApiService {
         fun getInstance(): ApiService = INSTANCE!!
     }
 
+    @FormUrlEncoded
+    @POST("/v2/token")
+    suspend fun login(
+        @Field("username") uid: String,
+        @Field("password") password: String,
+        @Field("grant_type") grantType: String = "password",
+    ): Response<AuthToken>
+
+    @FormUrlEncoded
+    @POST("/v2/token")
+    fun refreshToken(
+        @Field("refresh_token") refreshToken: String,
+        @Field("grant_type") grantType: String = "refresh_token",
+    ): Call<AuthToken>
 
     // @Path : 매개변수가 경로에서 사용됨
     // Question : 응답 구조
-    @GET("v1/questions/{pid}")
+    @GET("v2/questions/{pid}")
     suspend fun getQuestion(
         @Path("pid") pid: LocalDate
     ): Response<Question> // Response - HTTP 응답 코드 및 헤더와 같은 정보를 가져올 수 잇음.
 
-    @GET("/v1/questions/{qid}/answers/{uid}")
+    @GET("/v2/questions/{qid}/answers/{uid}")
     suspend fun getAnswer(
         @Path("qid") qid: LocalDate,
-        @Path("uid") uid: String? = "anonymous"
+        @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Answer>
 
     @FormUrlEncoded // 요청의 Content-Type 을 "application/x-www-form-urlencoded"로 만든다.
-    @POST("/v1/questions/{qid}/answers")
+    @POST("/v2/questions/{qid}/answers")
     suspend fun writeAnswer(
         @Path("qid") qid: LocalDate,
         @Field("text") text: String? = null,
@@ -100,17 +116,18 @@ interface ApiService {
     ): Response<Answer>
 
     @FormUrlEncoded
-    @PUT("/v1/questions/{qid}/answers/{uid}")
+    @PUT("/v2/questions/{qid}/answers/{uid}")
     suspend fun editAnswer(
         @Path("qid") qid: LocalDate,
         @Field("text") text: String? = null,
         @Field("photo") photo: String? = null,
-        @Path("uid") uid: String? = "anonymous"
+        @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Answer>
 
-    @DELETE("/v1/questions/{qid}/answers/{uid}")
+    @DELETE("/v2/questions/{qid}/answers/{uid}")
     suspend fun deleteAnswer(
         @Path("qid") qid: LocalDate,
-        @Path("uid") uid: String? = "anonymous"
+        @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Unit>
+
 }
