@@ -45,6 +45,7 @@ interface ApiService {
                 // 10초안에 데이터를 받아와야한다는 뜻이 아닌, 데이터를 읽어오는 각 작동의 간격이 10초를 초과하면 안됨.
                 .readTimeout(10, TimeUnit.SECONDS)  // 서버로 데이터를 보낼 때 발생
                 .addInterceptor(AuthInterceptor()) // OkHttp - Application 간의 Interceptors
+                .authenticator(TokenRefreshAuthenticator())
                 .addInterceptor(logging)
                 .build()
         }
@@ -83,6 +84,7 @@ interface ApiService {
         @Field("username") uid: String,
         @Field("password") password: String,
         @Field("grant_type") grantType: String = "password",
+        @Tag authType: AuthType = AuthType.NO_AUTH
     ): Response<AuthToken>
 
     @FormUrlEncoded
@@ -90,6 +92,7 @@ interface ApiService {
     fun refreshToken(
         @Field("refresh_token") refreshToken: String,
         @Field("grant_type") grantType: String = "refresh_token",
+        @Tag authType: AuthType = AuthType.NO_AUTH
     ): Call<AuthToken>
 
     // @Path : 매개변수가 경로에서 사용됨
