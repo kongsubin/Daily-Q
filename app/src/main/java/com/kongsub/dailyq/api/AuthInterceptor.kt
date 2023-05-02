@@ -12,7 +12,7 @@ class AuthInterceptor : Interceptor {
         val request = chain.request()
         val builder = request.newBuilder()
 
-        // Authorization 헤더가 필요한 경우에만, 선언 
+        // Authorization 헤더가 필요한 경우에만, 선언
         val authType = request.tag(AuthType::class.java) ?: AuthType.ACCESS_TOKEN
         when (authType) {
             AuthType.NO_AUTH -> {

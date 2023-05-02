@@ -55,5 +55,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     // HTTP 응답 요청시 로그 출력
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    // 이미지 로드
+    implementation 'io.coil-kt:coil:1.3.2'
 
 }

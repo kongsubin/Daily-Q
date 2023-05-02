@@ -12,6 +12,8 @@ import com.kongsub.dailyq.api.adapter.LocalDateAdapter
 import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
 import com.kongsub.dailyq.api.response.Answer
 import com.kongsub.dailyq.api.response.AuthToken
+import com.kongsub.dailyq.api.response.Image
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -23,6 +25,8 @@ import java.util.concurrent.TimeUnit
    싱글톤 패턴으로 만들어 앱 전체에서 하나의 인스턴스를 공유하게 만듦 */
 interface ApiService {
 
+    // https://www.bsidesoft.com/8187
+    // 객체의 한 종류로서, 클래스 내 정의되면 클래스 이름으로 접근 가능함. static 과 비슷해보이지만, static 과 똑같은 것은 아님.
     companion object {
 
         private var INSTANCE: ApiService? = null
@@ -134,5 +138,11 @@ interface ApiService {
         @Path("qid") qid: LocalDate,
         @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Unit>
+
+    @Multipart
+    @POST("/v2/images")
+    suspend fun uploadImage(
+        @Part image: MultipartBody.Part,
+    ): Response<Image>
 
 }
