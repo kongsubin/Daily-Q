@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" } // PhotoView 를 받아올 수 있는 저장소
     }
 }
 rootProject.name = "Daily Q"

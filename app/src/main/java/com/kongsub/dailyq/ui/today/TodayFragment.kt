@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kongsub.dailyq.R
 import com.kongsub.dailyq.api.response.Question
 import com.kongsub.dailyq.databinding.FragmentTodayBinding
 import com.kongsub.dailyq.ui.base.BaseFragment
+import com.kongsub.dailyq.ui.image.ImageViewerActivity
 import com.kongsub.dailyq.ui.write.WriteActivity
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -115,6 +117,20 @@ class TodayFragment : BaseFragment() {
         binding.textAnswer.text = answer?.text
 
         binding.writeButton.isVisible = answer == null
+
+        binding.photoAnswer.isVisible = !answer?.photo.isNullOrEmpty()
+        answer?.photo?.let {
+            binding.photoAnswer.load(it) {
+                placeholder(R.drawable.ph_image)
+            }
+            binding.photoAnswer.setOnClickListener {
+                startActivity(
+                    Intent(requireContext(),
+                ImageViewerActivity::class.java).apply {
+                    putExtra(ImageViewerActivity.EXTRA_URL, answer.photo)
+                })
+            }
+        }
     }
 }
 
