@@ -99,6 +99,7 @@ interface ApiService {
         @Tag authType: AuthType = AuthType.NO_AUTH
     ): Call<AuthToken>
 
+    // 질문 조회
     // @Path : 매개변수가 경로에서 사용됨
     // Question : 응답 구조
     @GET("v2/questions/{pid}")
@@ -106,12 +107,14 @@ interface ApiService {
         @Path("pid") pid: LocalDate
     ): Response<Question> // Response - HTTP 응답 코드 및 헤더와 같은 정보를 가져올 수 잇음.
 
+    // 답변 조회
     @GET("/v2/questions/{qid}/answers/{uid}")
     suspend fun getAnswer(
         @Path("qid") qid: LocalDate,
         @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Answer>
 
+    // 답변 등록
     @FormUrlEncoded // 요청의 Content-Type 을 "application/x-www-form-urlencoded"로 만든다.
     @POST("/v2/questions/{qid}/answers")
     suspend fun writeAnswer(
@@ -124,6 +127,7 @@ interface ApiService {
      */
     ): Response<Answer>
 
+    // 답변 수정
     @FormUrlEncoded
     @PUT("/v2/questions/{qid}/answers/{uid}")
     suspend fun editAnswer(
@@ -133,16 +137,24 @@ interface ApiService {
         @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Answer>
 
+    // 답변 삭제
     @DELETE("/v2/questions/{qid}/answers/{uid}")
     suspend fun deleteAnswer(
         @Path("qid") qid: LocalDate,
         @Path("uid") uid: String? = AuthManager.uid // "anonymous" => 인증없이 사용하기 위해 하드코딩한 것을 변경
     ): Response<Unit>
 
+    // image upload
     @Multipart
     @POST("/v2/images")
     suspend fun uploadImage(
         @Part image: MultipartBody.Part,
     ): Response<Image>
 
+    // 질문 목록 조회
+    @GET("/v2/questions")
+    suspend fun getQuestions(
+        @Query("from_date") fromDate: LocalDate,
+        @Query("page_size") pageSize: Int
+    ): Response<List<Question>>
 }

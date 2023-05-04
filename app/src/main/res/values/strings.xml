@@ -24,4 +24,8 @@
     <string name="add_photo">사진추가</string>
     <string name="done">완료</string>
     <string name="date_format">yyyy년 M월 d일</string>
+
+    <string name="answer_count_format">%d명이 답했습니다</string>
+    <string name="no_answer_yet">아무도 답을 하지 않았습니다...</string>
+    <string name="retry">재시도</string>
 </resources>
