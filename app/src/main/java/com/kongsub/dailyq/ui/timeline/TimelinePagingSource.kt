@@ -15,7 +15,7 @@ import java.time.LocalDate
  */
 class TimelinePagingSource(val api: ApiService) : PagingSource<LocalDate, Question>(){
 
-    // LoadParmas 를 인자로 받아 조건에 따라 데이터를 불러옴.
+    // LoadParams 를 인자로 받아 조건에 따라 데이터를 불러옴.
     override suspend fun load(params: LoadParams<LocalDate>): LoadResult<LocalDate, Question> {
         val fromDate = params.key ?: LocalDate.now()
 

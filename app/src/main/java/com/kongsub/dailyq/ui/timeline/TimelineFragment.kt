@@ -44,6 +44,7 @@ class TimelineFragment : BaseFragment() {
         }
 
         lifecycleScope.launch {
+            // initialLoadSize : 처음요청하는 페이지의 크기,
             Pager(PagingConfig(initialLoadSize = 6, pageSize = 3, enablePlaceholders = false)){
                 TimelinePagingSource(api)
             }.flow.collectLatest {
