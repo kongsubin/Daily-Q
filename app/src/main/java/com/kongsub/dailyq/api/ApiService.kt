@@ -13,6 +13,7 @@ import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
 import com.kongsub.dailyq.api.response.Answer
 import com.kongsub.dailyq.api.response.AuthToken
 import com.kongsub.dailyq.api.response.Image
+import okhttp3.Cache
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,7 +32,8 @@ interface ApiService {
 
         private var INSTANCE: ApiService? = null
 
-        private fun okHttpClient(): OkHttpClient {
+        // cache 사용을 위한 Context 매개변수 추가
+        private fun okHttpClient(context: Context): OkHttpClient {
             val builder = OkHttpClient.Builder()
             val logging = HttpLoggingInterceptor()
             logging.level = HttpLoggingInterceptor.Level.BODY
@@ -42,15 +44,23 @@ interface ApiService {
             BODY : 요청라인, 헤더, 본문, 응답 라인, 헤더, 본문을 출력
              */
 
+            // cache 사용 1
+            val cacheSize = 5 * 1024 * 1024L // 5 MB
+            val cache = Cache(context.cacheDir, cacheSize)
+
             return builder
                 .connectTimeout(3, TimeUnit.SECONDS)    // TCP handshake 실패 시, 기본값 10초
                 .writeTimeout(10, TimeUnit.SECONDS)
                 // 서버와 연결 후 데이터 수신시 정해진 시간 초과할때 발생,
                 // 10초안에 데이터를 받아와야한다는 뜻이 아닌, 데이터를 읽어오는 각 작동의 간격이 10초를 초과하면 안됨.
                 .readTimeout(10, TimeUnit.SECONDS)  // 서버로 데이터를 보낼 때 발생
+                .cache(cache)   // cache 사용 2
                 .addInterceptor(AuthInterceptor()) // OkHttp - Application 간의 Interceptors
                 .authenticator(TokenRefreshAuthenticator())
                 .addInterceptor(logging)
+                // 로그 순서 AppInterceptor -> NetworkInterceptor -> NetworkInterceptor -> AppInterceptor
+                .addInterceptor(EndpointLoggingInterceptor("AppInterceptor", "answers"))
+                .addNetworkInterceptor(EndpointLoggingInterceptor("NetworkInterceptor", "answers"))
                 .build()
         }
         private fun create(context: Context) : ApiService {
@@ -68,7 +78,7 @@ interface ApiService {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(LocalDateConverterFactory())
                 .baseUrl("http://10.0.2.2:5000")
-                .client(okHttpClient())
+                .client(okHttpClient(context))  // cache 사용 3
                 .build()
                 .create(ApiService::class.java)
         }
@@ -102,9 +112,9 @@ interface ApiService {
     // 질문 조회
     // @Path : 매개변수가 경로에서 사용됨
     // Question : 응답 구조
-    @GET("v2/questions/{pid}")
+    @GET("/v2/questions/{qid}")
     suspend fun getQuestion(
-        @Path("pid") pid: LocalDate
+        @Path("qid") qid: LocalDate
     ): Response<Question> // Response - HTTP 응답 코드 및 헤더와 같은 정보를 가져올 수 잇음.
 
     // 답변 조회
@@ -157,4 +167,10 @@ interface ApiService {
         @Query("from_date") fromDate: LocalDate,
         @Query("page_size") pageSize: Int
     ): Response<List<Question>>
+
+    // 상세 보기
+    @GET("/v2/questions/{qid}/answers")
+    suspend fun getAnswers(
+        @Path("qid") qid:LocalDate
+    ): Response<List<Answer>>
 }

@@ -35,6 +35,8 @@ class TimelineFragment : BaseFragment() {
         binding.apply {
             adapter = TimelineAdapter(requireContext())
 
+            // withLoadStateFooter : 로드 상태 표시
+            // retry : 에러시 새로고침을 위한 것
             recycler.adapter = adapter.withLoadStateFooter(TimelineLoadStateAdapter{
                 adapter.retry()
             })

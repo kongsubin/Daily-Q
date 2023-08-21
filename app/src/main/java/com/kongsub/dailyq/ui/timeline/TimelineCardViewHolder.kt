@@ -1,9 +1,11 @@
 package com.kongsub.dailyq.ui.timeline
 
+import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import com.kongsub.dailyq.R
 import com.kongsub.dailyq.api.response.Question
 import com.kongsub.dailyq.databinding.ItemTimelineCardBinding
+import com.kongsub.dailyq.ui.details.DetailsActivity
 import java.time.format.DateTimeFormatter
 
 class TimelineCardViewHolder(val binding: ItemTimelineCardBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -24,6 +26,12 @@ class TimelineCardViewHolder(val binding: ItemTimelineCardBinding) : RecyclerVie
 
         binding.card.setOnClickListener {
             // Todo 상세화면으로 이동
+            val context = binding.root.context
+
+            context.startActivity(Intent(context,
+            DetailsActivity::class.java).apply {
+                putExtra(DetailsActivity.EXTRA_QID, question.id)
+            })
         }
     }
 }
