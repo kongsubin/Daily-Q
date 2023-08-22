@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.kongsub.dailyq.AuthManager
@@ -13,6 +16,7 @@ import com.kongsub.dailyq.R
 import com.kongsub.dailyq.api.response.User
 import com.kongsub.dailyq.databinding.FragmentProfileBinding
 import com.kongsub.dailyq.ui.base.BaseFragment
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.ConnectException
 
@@ -27,6 +31,12 @@ class ProfileFragment : BaseFragment() {
     val uid: String by lazy {
         requireArguments().getString(ARG_UID)!!
     }
+
+    var adapter: UserAnswerAdapter? = null
+
+    val userAnswerFlow = Pager(PagingConfig(pageSize = 5)) {
+        UserAnswerPagingSource(api, uid)
+    }.flow
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +70,15 @@ class ProfileFragment : BaseFragment() {
                 setupProfile(user)
             } catch (e: ConnectException){
 
+            }
+        }
+
+        lifecycleScope.launch {
+            adapter = UserAnswerAdapter(requireContext())
+            binding.pager.adapter = adapter
+
+            userAnswerFlow.collectLatest {
+                adapter?.submitData(it)
             }
         }
     }
