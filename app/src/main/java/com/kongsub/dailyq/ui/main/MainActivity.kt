@@ -1,6 +1,7 @@
 package com.kongsub.dailyq.ui.main
 
 import android.os.Bundle
+import com.kongsub.dailyq.AuthManager
 import com.kongsub.dailyq.R
 import com.kongsub.dailyq.databinding.ActivityMainBinding
 import com.kongsub.dailyq.ui.base.BaseActivity
@@ -31,10 +32,12 @@ class MainActivity : BaseActivity() {
                     ft.replace(R.id.host, TodayFragment())
                     supportActionBar?.setTitle(R.string.title_today)
                 }
-
                 R.id.profile -> {
-                    ft.replace(R.id.host, ProfileFragment())
-                    supportActionBar?.setTitle(R.string.title_profile)
+                    ft.replace(R.id.host, ProfileFragment().apply {
+                        arguments = Bundle().apply {
+                            putString(ProfileFragment.ARG_UID, AuthManager.uid)
+                        }
+                    })
                 }
             }
             ft.commit()

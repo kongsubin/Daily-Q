@@ -10,6 +10,7 @@ import com.kongsub.dailyq.R
 import com.kongsub.dailyq.api.response.Answer
 import com.kongsub.dailyq.databinding.ItemAnswerBinding
 import com.kongsub.dailyq.ui.image.ImageViewerActivity
+import com.kongsub.dailyq.ui.profile.ProfileActivity
 
 class AnswerViewHolder(val binding: ItemAnswerBinding) : RecyclerView.ViewHolder(binding.root) {
     fun bind(answer: Answer) {
@@ -39,5 +40,12 @@ class AnswerViewHolder(val binding: ItemAnswerBinding) : RecyclerView.ViewHolder
         }
 
         binding.elapsedTime.text = DateUtils.getRelativeTimeSpanString(answer.createdAt.time)
+
+        binding.userPhoto.setOnClickListener {
+            val context = itemView.context
+            context.startActivity(Intent(context, ProfileActivity::class.java).apply {
+                putExtra(ProfileActivity.EXTRA_UID, answer.answerer?.id)
+            })
+        }
     }
 }

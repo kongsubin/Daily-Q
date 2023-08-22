@@ -16,6 +16,7 @@
         android:theme="@style/Theme.DailyQ"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.details.DetailsActivity"
             android:exported="false">
@@ -27,6 +28,13 @@
             android:name=".ui.image.ImageViewerActivity"
             android:exported="false"
             android:theme="@style/Theme.DailyQ.ImageViewer">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

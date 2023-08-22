@@ -4,15 +4,12 @@ import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.kongsub.dailyq.AuthManager
-import com.kongsub.dailyq.api.response.Question
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import com.kongsub.dailyq.api.adapter.LocalDateAdapter
 import com.kongsub.dailyq.api.converter.LocalDateConverterFactory
-import com.kongsub.dailyq.api.response.Answer
-import com.kongsub.dailyq.api.response.AuthToken
-import com.kongsub.dailyq.api.response.Image
+import com.kongsub.dailyq.api.response.*
 import okhttp3.Cache
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -173,4 +170,27 @@ interface ApiService {
     suspend fun getAnswers(
         @Path("qid") qid:LocalDate
     ): Response<List<Answer>>
+
+    // 사용자 정보 가져오기
+    @GET("/v2/users/{uid}")
+    suspend fun getUser(
+        @Path("uid") uid: String
+    ): Response<User>
+
+    // 사용자의 답 목록 가져오기
+    @GET("/v2/users/{uid}/answers")
+    suspend fun getUserAnswers(
+        @Path("uid") uid: String,
+        @Query("from_date") fromDate: LocalDate? = null
+    ): Response<List<QuestionAndAnswer>>
+
+    // 팔로우
+    @POST("/v2/user/following/{uid}")
+    suspend fun follow(@Path("uid") uid: String): Response<Unit>
+
+    // 팔로우 취소
+    @DELETE("/v2/user/following/{uid}")
+    suspend fun unfollow(
+        @Path("uid") uid: String,
+    ): Response<Unit>
 }
