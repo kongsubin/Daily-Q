@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kongsub.dailyq.databinding.FragmentTimelineBinding
 import com.kongsub.dailyq.ui.base.BaseFragment
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,6 +37,11 @@ class TimelineFragment : BaseFragment() {
 
         binding.apply {
             adapter = TimelineAdapter(requireContext())
+            adapter.addLoadStateListener {
+                if (it.mediator?.refresh is LoadState.NotLoading) {
+                    binding.refreshLayout.isRefreshing = false
+                }
+            }
 
             // withLoadStateFooter : 로드 상태 표시
             // retry : 에러시 새로고침을 위한 것
@@ -44,6 +51,13 @@ class TimelineFragment : BaseFragment() {
 
             recycler.adapter = adapter
             recycler.layoutManager = LinearLayoutManager(context)
+
+            binding.refreshLayout.setOnRefreshListener {
+                lifecycleScope.launch{
+                    delay(1000)
+                    adapter.refresh()
+                }
+            }
         }
 
         lifecycleScope.launch {

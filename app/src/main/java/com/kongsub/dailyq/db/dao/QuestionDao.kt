@@ -9,6 +9,12 @@ import com.kongsub.dailyq.db.entity.QuestionEntity
 
 @Dao
 interface QuestionDao {
+    @Query("SELECT * FROM question WHERE id=:fromDate")
+    suspend fun get(fromDate: String): QuestionEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrReplace(vararg questions: QuestionEntity)
+
     // 서버의 정보는 로컬의 정보보다 최신이므로, 기본키의 충돌이 발생할 경우 서버의 데이터로 업데이트 한다.
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(questions: List<QuestionEntity>)
