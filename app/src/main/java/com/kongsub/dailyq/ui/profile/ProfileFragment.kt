@@ -15,6 +15,7 @@ import com.kongsub.dailyq.AuthManager
 import com.kongsub.dailyq.R
 import com.kongsub.dailyq.api.response.User
 import com.kongsub.dailyq.databinding.FragmentProfileBinding
+import com.kongsub.dailyq.db.entity.UserEntity
 import com.kongsub.dailyq.ui.base.BaseFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -59,6 +60,46 @@ class ProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 로컬 DB 에서 사용자 정보를 불러온다.
+        // 로컬의 정보가 오래된 경우, 서버의 응답을 받은 후 새로운 정보로 갱신
+        lifecycleScope.launch {
+            val oldUserEntity = db.getUserDao().get(uid)
+            if (oldUserEntity != null) {
+               setupProfile(oldUserEntity)
+            }
+
+            val user: User
+            try {
+                val userResponse = api.getUser(uid)
+                if (!userResponse.isSuccessful) {
+                    return@launch
+                }
+                user = userResponse.body()!!
+            } catch (e: ConnectException) {
+                return@launch
+            }
+
+            val newUserEntity = UserEntity(
+                user.id,
+                user.name,
+                user.description,
+                user.photo,
+                user.answerCount,
+                user.followerCount,
+                user.followingCount,
+                user.isFollowing ?: false,
+                user.updatedAt
+            )
+
+            if (oldUserEntity == null) {
+                db.getUserDao().insert(newUserEntity)
+                setupProfile(newUserEntity)
+            } else if (oldUserEntity != newUserEntity) {
+                db.getUserDao().update(newUserEntity)
+                setupProfile(newUserEntity)
+            }
+        }
+        /*
         lifecycleScope.launch{
             try {
                 val userResponse = api.getUser(uid)
@@ -71,7 +112,7 @@ class ProfileFragment : BaseFragment() {
             } catch (e: ConnectException){
 
             }
-        }
+        } */
 
         lifecycleScope.launch {
             adapter = UserAnswerAdapter(requireContext())
@@ -129,5 +170,9 @@ class ProfileFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    fun setupProfile(user: UserEntity) {
+
     }
 }
