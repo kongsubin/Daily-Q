@@ -1,6 +1,7 @@
 package com.kongsub.dailyq.db
 
 import androidx.room.TypeConverter
+import java.time.LocalDate
 import java.util.*
 
 class Converters {
@@ -12,5 +13,15 @@ class Converters {
     @TypeConverter
     fun toLong(value: Date?): Long? {
         return value?.time
+    }
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? {
+        return if (value == null) null else LocalDate.parse(value)
+    }
+
+    @TypeConverter
+    fun toString(value: LocalDate?): String? {
+        return value?.toString()
     }
 }

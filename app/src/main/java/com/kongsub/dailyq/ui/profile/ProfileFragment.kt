@@ -124,7 +124,7 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    fun setupProfile(user: User) {
+    fun setupProfile(user: UserEntity) {
         binding.name.text = user.name
         binding.description.text = user.description
         binding.answerCount.text = user.answerCount.toString()
@@ -172,7 +172,4 @@ class ProfileFragment : BaseFragment() {
         }
     }
 
-    fun setupProfile(user: UserEntity) {
-
-    }
 }

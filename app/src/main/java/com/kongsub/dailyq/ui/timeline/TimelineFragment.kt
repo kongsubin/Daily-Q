@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,8 +48,19 @@ class TimelineFragment : BaseFragment() {
 
         lifecycleScope.launch {
             // initialLoadSize : 처음요청하는 페이지의 크기,
+            /*
             Pager(PagingConfig(initialLoadSize = 6, pageSize = 3, enablePlaceholders = false)){
                 TimelinePagingSource(api)
+            }.flow.collectLatest {
+                adapter.submitData(it)
+            } */
+            @OptIn(ExperimentalPagingApi::class)
+            Pager(
+                PagingConfig(initialLoadSize = 6, pageSize = 3, enablePlaceholders = false),
+                null,
+                TimelineRemoteMediator(api, db)
+            ) {
+                db.getQuestionDao().getPagingSource()
             }.flow.collectLatest {
                 adapter.submitData(it)
             }
