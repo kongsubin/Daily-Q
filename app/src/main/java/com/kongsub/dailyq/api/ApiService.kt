@@ -193,4 +193,11 @@ interface ApiService {
     suspend fun unfollow(
         @Path("uid") uid: String,
     ): Response<Unit>
+
+    // 푸시 토큰 등록
+    @FormUrlEncoded
+    @POST("/v2/user/push-tokens")
+    suspend fun registerPushToken(
+        @Field("token") pushToken: String
+    ): Response<Unit>
 }

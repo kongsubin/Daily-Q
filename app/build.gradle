@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -83,6 +84,10 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.5.2'
     // swipe refresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-
+    // fcm
+    implementation platform('com.google.firebase:firebase-bom:32.2.2')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
 
 }

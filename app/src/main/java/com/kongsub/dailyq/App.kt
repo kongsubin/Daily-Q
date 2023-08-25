@@ -12,5 +12,6 @@ class App : Application() {
         AuthManager.init(this)
         ApiService.init(this)
         AppDatabase.init(this)
+        Notifier.init(this)
     }
 }

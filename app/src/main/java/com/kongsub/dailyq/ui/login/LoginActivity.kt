@@ -8,12 +8,16 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.kongsub.dailyq.AuthManager
 import com.kongsub.dailyq.R
 import com.kongsub.dailyq.databinding.ActivityLoginBinding
 import com.kongsub.dailyq.ui.base.BaseActivity
 import com.kongsub.dailyq.ui.main.MainActivity
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class LoginActivity : BaseActivity() {
 
@@ -64,6 +68,11 @@ class LoginActivity : BaseActivity() {
                     AuthManager.uid = uid
                     AuthManager.accessToken = authToken?.accessToken
                     AuthManager.refreshToken = authToken?.refreshToken
+
+                    // 토큰 가져오기
+                    val messagingToken = FirebaseMessaging.getInstance().token.await()
+                    // API 서버로 전달
+                    api.registerPushToken(messagingToken)
 
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     finish()
